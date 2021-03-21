@@ -11,6 +11,8 @@ public class AppTest extends TestCase {
         assertEquals("xyzxyzxyzfdsfdsfdsfds", App.unboxString("3[xyz]4[fds]"));
         assertEquals("xyzxyzxyzxyzxyzxyzxyzxyzxyzxyzfdsfdsfdsfds", App.unboxString("10[xyz]4[fds]"));
         assertEquals("xyzfdsfdsfdsfdsfdsfdsfdsfdsfdsfdsfds", App.unboxString("1[xyz]11[fds]"));
+        assertEquals("hyy", App.unboxString("hyy3[]"));
+        assertEquals("", App.unboxString("100[]"));
     }
 
     public void testUnboxStringOnlySimpleString() {
@@ -25,9 +27,7 @@ public class AppTest extends TestCase {
 
         //Проверка развертывания строки состоящей из частей кторые надо повторить и не повторяющиеся части
 
-        String actual = App.unboxString("3[xyz]4[fds]rt");
-        String expected = "xyzxyzxyzfdsfdsfdsfdsrt";
-        assertEquals(expected, actual);
+        assertEquals("xyzxyzxyzfdsfdsfdsfdsrt", App.unboxString("3[xyz]4[fds]rt"));
 
     }
 
@@ -35,20 +35,28 @@ public class AppTest extends TestCase {
 
         //Проверка развертывания строки состоящей из частей кторые надо повторить и они имеют вложенность для повторения
 
-        String actual = App.unboxString("2[2[a]xyz]d");
-        String expected = "aaxyzaaxyzd";
-        assertEquals(expected, actual);
+        assertEquals("aaxyzaaxyzd", App.unboxString("2[2[a]xyz]d"));
     }
 
     public void testUnboxStringMixNestedString() {
-        String actual = App.unboxString("dfa2[2[a]xyz]rt");
-        String expected = "dfaaaxyzaaxyzrt";
-        assertEquals(expected, actual);
+
+        //Проверка развертывания строки состоящей из частей кторые надо повторить и они имеют вложенность для повторения
+        // и так же не повторяющиеся части
+
+        assertEquals("dfaaaxyzaaxyzrt", App.unboxString("dfa2[2[a]xyz]rt"));
+        assertEquals("dfaaaxyyzaaxyyzrt", App.unboxString("dfa2[2[a]x2[y]z]rt"));
+
+
     }
 
     public void testUnboxStringNotValid() {
-        assertEquals("Строка не валидна", App.unboxString(""));
 
+        // Проверка сторки на валидность
+
+        assertEquals("Строка не валидна", App.unboxString(""));
+        assertEquals("Строка не валидна", App.unboxString(" "));
+        assertEquals("Строка не валидна", App.unboxString(":hyy"));
+        assertEquals("Строка не валидна", App.unboxString(":hyy3[]"));
         assertEquals("Строка не валидна", App.unboxString("3[xyz]4]fds]"));
         assertEquals("Строка не валидна", App.unboxString("3[]4[]fds]"));
         assertEquals("Строка не валидна", App.unboxString("3][4][fds]"));
@@ -56,5 +64,6 @@ public class AppTest extends TestCase {
         assertEquals("Строка не валидна", App.unboxString("dfa2[2]a]xyzrt"));
         assertEquals("Строка не валидна", App.unboxString("dfa2]2[a]xyzrt"));
         assertEquals("Строка не валидна", App.unboxString("!dfa2[2[a]xyz]rt"));
+        assertEquals("Строка не валидна", App.unboxString("dfa2s[2[a]xyz]rt"));
     }
 }
