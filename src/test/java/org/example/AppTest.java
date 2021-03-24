@@ -45,8 +45,13 @@ public class AppTest extends TestCase {
 
         assertEquals("dfaaaxyzaaxyzrt", App.unboxString("dfa2[2[a]xyz]rt"));
         assertEquals("dfaaaxyyzaaxyyzrt", App.unboxString("dfa2[2[a]x2[y]z]rt"));
+    }
 
+    public void testUnboxStringMultiplyNestedString() {
 
+        //Проверка развертывания строки состоящей из множественной вложенности
+
+        assertEquals("aaaaaaaa", App.unboxString("2[2[2[a]]]"));
     }
 
     public void testUnboxStringNotValid() {

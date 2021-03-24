@@ -46,63 +46,31 @@ public class App {
 
             while (true) {
 
-                Pattern patternContainDigit = Pattern.compile("\\d+");
-                Matcher matcherContainDigit = patternContainDigit.matcher(result);
+                Pattern patternContainRepeatString = Pattern.compile("\\d+\\[[a-z]+]|\\d+\\[]");
+                Pattern patternContaindDigits = Pattern.compile("\\d+");
+                Matcher matcherContainRepeatString = patternContainRepeatString.matcher(result);
 
-                if (!matcherContainDigit.find()) {
+                if (!matcherContainRepeatString.find()) {
 
                     return result.toString();
                 }
 
-                Pattern patternRightBracket = Pattern.compile("]");
-                Matcher matcherRightBracket = patternRightBracket.matcher(result);
+                int indexDigit = matcherContainRepeatString.start();
 
-                int valueDigit = 0;
-                int indexDigit = 0;
-                int indexRightBracket = 0;
-                StringBuilder innerString = new StringBuilder();
+                String innerString = matcherContainRepeatString.group();
 
 
-                indexDigit = matcherContainDigit.start();
-                valueDigit = Integer.parseInt(matcherContainDigit.group());
-                if (matcherRightBracket.find()) {
-                    indexRightBracket = matcherRightBracket.start();
+                Matcher matcherContainDigits = patternContaindDigits.matcher(innerString);
+                matcherContainDigits.find();
+                int valueDigit = Integer.parseInt(matcherContainDigits.group());
 
-                    innerString.append(result, indexDigit + matcherContainDigit.group().length() + 1, indexRightBracket);
+                StringBuilder repeat = new StringBuilder();
 
-                    Matcher matcherContainInnerDigit = patternContainDigit.matcher(innerString);
-
-                    if (!matcherContainInnerDigit.find()) {
-
-                        for (int i = 1; i < valueDigit; i++) {
-                            innerString.append(result, indexDigit + matcherContainDigit.group().length() + 1, indexRightBracket);
-                        }
-
-                        result.replace(indexDigit, indexRightBracket + 1, innerString.toString());
-                    } else {
-
-
-                        innerString.append("]");
-                        matcherContainDigit.find();
-                        int indexInnerValue = matcherContainDigit.start(0);
-
-                        Matcher matcherContainInnerDigit2 = patternContainDigit.matcher(innerString);
-                        matcherContainInnerDigit2.find();
-
-                        if (matcherContainInnerDigit2.start() == 0) {
-
-                            result.replace(indexInnerValue, indexRightBracket + 1, unboxString(innerString.toString())).toString();
-                        } else {
-
-                            innerString.delete(0, matcherContainInnerDigit2.start());
-                            result.replace(indexInnerValue, indexRightBracket + 1, unboxString(innerString.toString())).toString();
-                        }
-                    }
-                } else {
-
-                    throw new Exception();
+                for (int i = 0; i < valueDigit; i++) {
+                    repeat.append(innerString, matcherContainDigits.group().length() + 1, matcherContainRepeatString.group().length() - 1);
                 }
 
+                result.replace(indexDigit, indexDigit + matcherContainRepeatString.group().length(), repeat.toString());
             }
         } catch (Exception ex) {
 
